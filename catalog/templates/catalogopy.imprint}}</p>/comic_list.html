@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Comic List</h1>
+
+    {% if comic_list %}
+    <ul>
+
+      {% for comic in comic_list %}
+      <li>
+        <a href="{{ comic.get_absolute_url }}">{{ comic.series }} {{comic.number}}</a> 
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no comics in the library.</p>
+    {% endif %}
+{% endblock %}

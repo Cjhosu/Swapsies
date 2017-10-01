@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<br></br>
+    <h2> Add a book to lend </h2>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+
+    <input type="submit" value="Submit"<button class="btn btn-default btn-sm" type="button" style="color:#000000"/></button> <a href="{% url 'index' %}"<button class="btn btn-default btn-sm" type="button" style="color: #000000">Cancel</button></a>
+
+</form>
+{% endblock %}
+
+

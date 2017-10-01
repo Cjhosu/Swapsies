@@ -1,0 +1,27 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block content %}
+  <h1>{{ book.title }}</h1>
+
+  <p><strong>Author:</strong> <a href="">{{ book.author_first }}, {{book.author_last}}</a></p> <!-- author detail link not yet defined -->
+  <p><strong>Copyright:</strong> {{ book.publisher }} {{book.year}}</p>
+  <p><strong>ISBN:</strong> {{ book.isbn }}</p> 
+  <div style="margin-left:20px;margin-top:20px">
+  <div style="margin-left:20px;margin-top:20px">
+ <hr>
+  <h4>Summary:</h4>
+    <p>{{book.description|linebreaks}}</p>
+  </div>
+  <hr>
+  <h3>Availability</h3>
+
+   {% for copy in book.item.item_status_set.all %}
+    <hr>
+    <p class="{% if copy.due_back == null %}text-success{% elif copy.due_back != null %}text-danger{% else %}text-warning{% endif %}"></p>
+    {% if copy.borrower != null %}<p><strong>On loan to: {{copy.borrower}}</strong></p>
+    {% else %}<p><strong>There is a copy available! </strong></p>
+    <p><strong> Owner: {{book.item.owned_by}}</strong></p>
+ {% endif %}
+ {% endfor %}
+  </div>
+{% endblock %}
