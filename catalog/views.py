@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .forms import AddBookForm, UpdateBorrowerForm, AddItemForm, SignUpForm
 from django.http import HttpResponseRedirect
 from datetime import datetime
-from .models import Item, Item_type, Book, Comic, Item_status
+from .models import Item, User, Item_type, Book, Comic, Item_status
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login, authenticate
@@ -57,7 +57,7 @@ def AddNewBook(request):
     if request.POST:
         form = AddBookForm(request.POST)
         if form.is_valid():
-            additem= Item ()
+            additem = Item()
             additem.item_name = form.cleaned_data['item_name']
             additem.item_type_id = 1
             additem.owned_by = request.user
@@ -142,10 +142,13 @@ def signup(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            email.save()
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
+            adduser = User.objects.get(username=username)
+            adduser.email = form.cleaned_data['email']
+            adduser.first_name = form.cleaned_data['first_name']
+            adduser.last_name = form.cleaned_data['last_name']
+            adduser.save()
             login(request, user)
             return redirect('index')
     else:
