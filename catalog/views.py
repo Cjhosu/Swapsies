@@ -1,14 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from .forms import AddBookForm, UpdateBorrowerForm
-from .forms import AddItemForm
+
+# Create your views here.
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import AddBookForm, UpdateBorrowerForm, AddItemForm, SignUpForm
 from django.http import HttpResponseRedirect
 from datetime import datetime
-# Create your views here.
 from .models import Item, Item_type, Book, Comic, Item_status
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 from django.db.models import F
-from django.shortcuts import redirect
 
 def index(request):
     num_books=Book.objects.all().count()
@@ -135,9 +136,16 @@ def UpdateBorrower(request):
         form = UpdateBorrowerForm()
         return render(request,'catalog/update_borrower.html', {'form':form})
 
-
-
-
-
-
-
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('index')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
