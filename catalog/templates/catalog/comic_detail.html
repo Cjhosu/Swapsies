@@ -1,0 +1,28 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block content %}
+  <h1>{{ comic.series }}</h1>
+
+  <p><strong>Title:</strong> {{ comic.title }}</p>
+  <p><strong>Publisher:</strong> {{ comic.publisher }}</p>
+  <p><strong>Month:</strong> {{ comic.month }}</p>
+  <p><strong>Number:</strong> {{ comic.number }}</p>
+  <div style="margin-left:20px;margin-top:20px">
+  <div style="margin-left:20px;margin-top:20px">
+ <hr>
+  <h4>Summary:</h4>
+    <p>{{comic.description|linebreaks}}</p>
+  </div>
+  <hr>
+  <h3>Availability</h3>
+
+   {% for copy in comic.item.item_status_set.all %}
+    <hr>
+    <p class="{% if copy.due_back == null %}text-success{% elif copy.due_back != null %}text-danger{% else %}text-warning{% endif %}"></p>
+    {% if copy.borrower != null %}<p><strong>On loan to: {{copy.borrower}}</strong></p>
+    {% else %}<p><strong>There is a copy available! </strong></p>
+    <p><strong> Owner: {{comic.item.owned_by}}</strong></p>
+ {% endif %}
+ {% endfor %}
+  </div>
+{% endblock %}

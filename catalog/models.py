@@ -45,7 +45,7 @@ class Comic(models.Model):
     title = models.CharField(max_length=255)
     number = models.IntegerField(default=None, blank=True, null=True)
     year = models.CharField(max_length=4)
-    month = models.CharField(max_length=3)
+    month = models.CharField(max_length=10, default=None, blank=True, null=True)
     description = models.CharField(max_length=500, default=None, blank=True, null=True)
     def __str__(self):
       return (self.series)

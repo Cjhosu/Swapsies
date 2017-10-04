@@ -1,7 +1,7 @@
 
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import AddBookForm, UpdateBorrowerForm, AddItemForm, SignUpForm
+from .forms import AddBookForm, AddComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm
 from django.http import HttpResponseRedirect
 from datetime import datetime
 from .models import Item, User, Item_type, Book, Comic, Item_status
@@ -31,11 +31,14 @@ class BookListView(LoginRequiredMixin,generic.ListView):
 
 class ComicListView(LoginRequiredMixin,generic.ListView):
     model = Comic
-
+    paginate_by = 10
 
 class BookDetailView(LoginRequiredMixin,generic.DetailView):
     model = Book
 
+
+class ComicDetailView(LoginRequiredMixin,generic.DetailView):
+    model = Comic
 
 class LoanedItemsByUserListView(LoginRequiredMixin,generic.ListView):
     model = Item_status
@@ -89,6 +92,41 @@ def AddNewBook(request):
     return render(request, 'catalog/add_book_form.html', {'form': form})
 
 
+def AddNewComic(request):
+    if request.POST:
+        form = AddComicForm(request.POST)
+        if form.is_valid():
+            additem = Item()
+            additem.item_name = form.cleaned_data['item_name']
+            additem.item_type_id = 2
+            additem.owned_by = request.user
+            additem.added_at = datetime.now()
+            additem.updated_at = datetime.now()
+            additem.save()
+
+            obj_id = additem.id
+
+            addcomic = Comic()
+            addcomic.item_id = additem.id
+            addcomic.publisher = form.cleaned_data['publisher']
+            addcomic.series = form.cleaned_data['series']
+            addcomic.title = form.cleaned_data['title']
+            addcomic.number = form.cleaned_data['number']
+            addcomic.year = form.cleaned_data['year']
+            addcomic.month = form.cleaned_data['month']
+            addcomic.description  = form.cleaned_data['description']
+            addcomic.save()
+
+            addstatus = Item_status()
+            addstatus.item_id = additem.id
+
+            addstatus.save()
+
+            return HttpResponseRedirect('/catalog/comics/')
+    else:
+        form = AddComicForm()
+    return render(request, 'catalog/add_comic_form.html', {'form': form})
+
 def AddNewItem(request):
     if request.method == 'POST':
         form = AddItemForm(request.POST)
@@ -97,6 +135,8 @@ def AddNewItem(request):
             print(itemtype.type)
             if itemtype.type == 'Book':
                 return HttpResponseRedirect('/catalog/books/add')
+            if itemtype.type == 'Comic':
+                return HttpResponseRedirect('/catalog/comics/add')
             else:
                 return HttpResponseRedirect('/catalog/books/')
     else:

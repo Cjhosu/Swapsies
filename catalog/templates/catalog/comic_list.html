@@ -8,7 +8,7 @@
 
       {% for comic in comic_list %}
       <li>
-        <a href="{{ comic.get_absolute_url }}">{{ comic.series }} {{comic.number}}</a> 
+        <a href="{{ comic.pk }}">{{ comic.series }} {{comic.number}}</a>
       </li>
       {% endfor %}
 
