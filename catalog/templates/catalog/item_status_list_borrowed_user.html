@@ -1,9 +1,9 @@
-
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h2>Borrowed Books</h2>
+    <h2>Things You Borrowed</h2>
 
+  <h4> Books </h4>
     {% if item_status_list %}
     <ul>
 
@@ -15,8 +15,6 @@
 {% csrf_token %}
         <input type="submit" value="Pass Along"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
 </form>
-         {% else %}
-               {{itst.item.bookit.get.id}}
         {% endif %}
      </li>
       {% endfor %}
@@ -26,9 +24,32 @@
       <p>There are no books borrowed.</p>
     {% endif %}
 
+<h4> Comics <h4>
+    {% if item_status_list %}
+    <ul>
 
-    <h2>Loaned Books</h2>
-    {% if Loaned_list %}
+   {% for itst in item_status_list %}
+         {% if itst.item.item_type.type == "Comic" %}
+    <li>
+<form action="{% url 'pass-borrower' itst.id %}" method="post">
+        <a href="{% url 'comics-detail' itst.item.comicit.get.id %}">{{itst.item.comicit.get.title}}</a>
+{% csrf_token %}
+        <input type="submit" value="Pass Along"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+        {% endif %}
+     </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no books borrowed.</p>
+    {% endif %}
+
+    <h2>Things You Loaned</h2>
+
+  <h4> Books </h4>
+
+  {% if Loaned_list %}
     <ul>
       {% for thing in Loaned_list %}
          {% if thing.item.item_type.type == "Book" %}
@@ -39,7 +60,7 @@
         <input type="submit" value="Mark Returned"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
 </form>
       {% else %}
-          {{thing.item.item_name}}
+          <p> You currently have no books on loan </p>
       {% endif %}
     </li>
       {% endfor %}
@@ -48,8 +69,28 @@
       <p>You currently have no books on loan</p>
     {% endif %}
 
+  <h4> Comics </h4>
+    {% if Loaned_list %}
+    <ul>
+      {% for thing in Loaned_list %}
+         {% if thing.item.item_type.type == "Comic" %}
+    <li>
+<form action="{% url 'mark-returned' thing.id %}" method="post">
+        <a href="{% url 'comics-detail' thing.item.comicit.get.id %}">{{thing.item.comicit.get.title}}</a> <strong>({{thing.borrower}})</strong>
+{% csrf_token %}
+        <input type="submit" value="Mark Returned"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+      {% endif %}
+    </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p>You currently have no comics on loan</p>
+    {% endif %}
 
-    <h3>Other Books You Share</h3>
+<h2> Things You Share </h2>
+
+    <h4> Books </h4>
     {% if Other_list %}
     <ul>
       {% for thing in Other_list %}
@@ -58,17 +99,8 @@
  <form action="{% url 'pass-borrower' thing.id %}" method="post">
         <a href="{% url 'books-detail' thing.item.bookit.get.id %}">{{thing.item.bookit.get.title}}</a>
 {% csrf_token %}
-        <input type="submit" value="Loan"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+       <input type="submit" value="Loan"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
 </form>
-      {% elif thing.item.item_type.type == "Comic" %}
-<li>
- <form action="{% url 'pass-borrower' thing.id %}" method="post">
-        <a href="{% url 'books-detail' thing.item.bookit.get.id %}">{{thing.item.bookit.get.title}}</a>
-{% csrf_token %}
-        <input type="submit" value="Loan"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
-</form>
-      {% else %}
-          {{thing.item.item_name}}
       {% endif %}
     </li>
       {% endfor %}
@@ -76,4 +108,48 @@
     {% else %}
       <p>All your books are on loan</p>
     {% endif %}
+
+    <h4> Comics </h4>
+
+{% if Other_list %}
+    <ul>
+      {% for thing in Other_list %}
+         {% if thing.item.item_type.type == "Comic" %}
+
+<li>
+ <form action="{% url 'pass-borrower' thing.id %}" method="post">
+        <a href="{% url 'comics-detail' thing.item.comicit.get.id %}">{{thing.item.comicit.get.title}}</a>
+{% csrf_token %}
+        <input type="submit" value="Loan"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+      {% endif %}
+    </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p>All your comics are on loan</p>
+    {% endif %}
   {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
