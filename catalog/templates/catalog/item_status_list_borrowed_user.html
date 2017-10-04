@@ -1,3 +1,4 @@
+
 {% extends "base_generic.html" %}
 
 {% block content %}
@@ -53,6 +54,13 @@
     <ul>
       {% for thing in Other_list %}
          {% if thing.item.item_type.type == "Book" %}
+<li>
+ <form action="{% url 'pass-borrower' thing.id %}" method="post">
+        <a href="{% url 'books-detail' thing.item.bookit.get.id %}">{{thing.item.bookit.get.title}}</a>
+{% csrf_token %}
+        <input type="submit" value="Loan"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+      {% elif thing.item.item_type.type == "Comic" %}
 <li>
  <form action="{% url 'pass-borrower' thing.id %}" method="post">
         <a href="{% url 'books-detail' thing.item.bookit.get.id %}">{{thing.item.bookit.get.title}}</a>

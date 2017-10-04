@@ -39,13 +39,13 @@ class Book(models.Model):
       return self.item
 
 class Comic(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
+    item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, related_name = 'comicit')
     publisher = models.CharField(max_length=30)
     series = models.CharField(max_length=50)
     title = models.CharField(max_length=255)
     number = models.IntegerField(default=None, blank=True, null=True)
     year = models.CharField(max_length=4)
-    month = models.CharField(max_length=10, default=None, blank=True, null=True)
+    month = models.CharField(max_length=11, default=None, blank=True, null=True)
     description = models.CharField(max_length=500, default=None, blank=True, null=True)
     def __str__(self):
       return (self.series)
