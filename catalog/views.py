@@ -27,11 +27,12 @@ def index(request):
 class BookListView(LoginRequiredMixin,generic.ListView):
     model = Book
     paginate_by = 10
-
+    ordering = ('title',)
 
 class ComicListView(LoginRequiredMixin,generic.ListView):
     model = Comic
     paginate_by = 10
+    ordering = ('title',)
 
 class BookDetailView(LoginRequiredMixin,generic.DetailView):
     model = Book
