@@ -22,7 +22,7 @@ class AddComicForm(forms.Form):
     series = forms.CharField(max_length=50)
     number = forms.CharField(max_length=4)
     year = forms.CharField(max_length=4)
-    month = forms.CharField(max_length=10)
+    month = forms.CharField(max_length=10, required=False)
     description = forms.CharField(widget=forms.Textarea)
 
 class AddItemForm(forms.Form):
