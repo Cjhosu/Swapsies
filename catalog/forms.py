@@ -20,7 +20,7 @@ class AddComicForm(forms.Form):
     title = forms.CharField(max_length=255)
     publisher = forms.CharField(max_length=30)
     series = forms.CharField(max_length=50)
-    number = forms.CharField(max_length=4)
+    number = forms.CharField(max_length=4, required=False)
     year = forms.CharField(max_length=4)
     month = forms.CharField(max_length=10, required=False)
     description = forms.CharField(widget=forms.Textarea)
