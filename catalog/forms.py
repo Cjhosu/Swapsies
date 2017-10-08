@@ -1,7 +1,12 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Item_type , Item_status, User
+from .models import Item_type , Item_status, Item_request, User
 from django.contrib.auth.forms import UserCreationForm
+
+class IssueBookRequestForm(forms.ModelForm):
+    class Meta:
+        model = Item_request
+        fields = '__all__'
 
 class AddBookForm(forms.Form):
     item_id = forms.IntegerField
@@ -20,7 +25,7 @@ class AddComicForm(forms.Form):
     title = forms.CharField(max_length=255)
     publisher = forms.CharField(max_length=30)
     series = forms.CharField(max_length=50)
-    number = forms.IntegerField(required=False, initial=None)
+    number = forms.IntegerField(required=False, initial=None )
     year = forms.CharField(max_length=4)
     month = forms.CharField(max_length=10, required=False)
     description = forms.CharField(widget=forms.Textarea)

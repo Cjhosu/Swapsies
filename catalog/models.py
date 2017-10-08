@@ -45,10 +45,18 @@ class Comic(models.Model):
     title = models.CharField(max_length=255)
     number = models.IntegerField(default=None, blank=True, null=True)
     year = models.CharField(max_length=4)
-    month = models.CharField(max_length=11, default=None, blank=True, null=True)
+    month = models.CharField(max_length=10, default=None, blank=True, null=True)
     description = models.CharField(max_length=500, default=None, blank=True, null=True)
     def __str__(self):
       return (self.series)
+
+class Item_request(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
+    requester = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    requested_at = models.DateTimeField(default=None, blank=True, null=True)
+    filled_at = models.DateTimeField(default=None, blank=True, null=True)
+    def __str__(self):
+      return str(self.item)
 
 class Item_status(models.Model):
     item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)

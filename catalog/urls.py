@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'mark-returned/(?P<pk>\d+)$',views.MarkReturned, name='mark-returned'),
     url(r'^update_borrower/$', views.UpdateBorrower, name='update_borrower'),
     url(r'pass-borrower/(?P<pk>\d+)$',views.PassBorrower, name='pass-borrower'),
+    url(r'issue-book-request/(?P<pk>\d+)$',views.IssueBookRequest, name='issue-book-request'),
     url(r'^signup/$',views.signup, name='signup'),
 ]

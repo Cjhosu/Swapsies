@@ -1,11 +1,12 @@
 
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import AddBookForm, AddComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm
+from .forms import AddBookForm, AddComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm
 from django.http import HttpResponseRedirect
 from datetime import datetime
-from .models import Item, User, Item_type, Book, Comic, Item_status
+from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request
 from django.views import generic
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -16,27 +17,27 @@ def index(request):
     num_comics=Comic.objects.all().count()
     num_visits=request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits+1
-
+    reqitem=Item_request.objects.filter(filled_at= None)
     return render(
         request,
         'index.html',
-        context={'num_books':num_books, 'num_comics':num_comics, 'num_visits':num_visits},
+        context={'num_books':num_books, 'num_comics':num_comics, 'num_visits':num_visits, 'reqitem':reqitem,},
 )
 
 
 class BookListView(LoginRequiredMixin,generic.ListView):
     model = Book
     paginate_by = 10
-    ordering = ('title',)
+    ordering = ('title', )
+
 
 class ComicListView(LoginRequiredMixin,generic.ListView):
     model = Comic
     paginate_by = 10
-    ordering = ('title',)
+    ordering = ('title', )
 
 class BookDetailView(LoginRequiredMixin,generic.DetailView):
     model = Book
-
 
 class ComicDetailView(LoginRequiredMixin,generic.DetailView):
     model = Comic
@@ -171,6 +172,16 @@ def UpdateBorrower(request):
             this = Item_status.objects.get(pk=pk)
             this.borrower = user
             this.save()
+            obj, created = Item_request.objects.update_or_create(
+                item_id = this.item_id,
+                requester = this.borrower,
+                filled_at = None,
+              defaults = {'requested_at': datetime.now()}
+            )
+            fillreq = Item_request.objects.get(item_id = this.item_id,requester = this.borrower, filled_at = None)
+            if fillreq.filled_at == None:
+                fillreq.filled_at = datetime.now()
+                fillreq.save()
             return HttpResponseRedirect('/catalog/mybooks/')
     elif request.method == 'GET':
         pk= request.session['pk']
@@ -195,3 +206,20 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+def IssueBookRequest(request,pk):
+    bookreq = get_object_or_404(Book, pk=pk)
+    if request.method == 'POST':
+        irequest = Item_request()
+        bookitem = Book.objects.get(pk=pk)
+        obj, created = Item_request.objects.update_or_create(
+            item_id = bookitem.item_id,
+            requester = request.user,
+            filled_at = None,
+          defaults = {'requested_at': datetime.now()}
+        )
+        messages.info(request, 'Your request has been received!')
+        return HttpResponseRedirect('/catalog/books/'+pk)
+    else:
+        return HttpResponseRedirect('/catalog/')
+

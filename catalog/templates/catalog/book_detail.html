@@ -23,5 +23,18 @@
     <p><strong> Owner: {{book.item.owned_by}}</strong></p>
  {% endif %}
  {% endfor %}
+{% if book.item.owned_by != request.user %}
+<form action="{% url 'issue-book-request' book.id %}" method="post">
+{% csrf_token %}
+        <input type="submit" value="Request Book"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+{% endif %}
   </div>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 {% endblock %}
