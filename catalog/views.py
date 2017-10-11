@@ -228,7 +228,7 @@ def IssueBookRequest(request,pk):
         return HttpResponseRedirect('/catalog/')
 
 def IssueComicRequest(request,pk):
-    comicreq = get_object_or_404(Book, pk=pk)
+    comicreq = get_object_or_404(Comic, pk=pk)
     if request.method == 'POST':
         irequest = Item_request()
         comicitem = Comic.objects.get(pk=pk)
