@@ -57,6 +57,8 @@ class Item_request(models.Model):
     filled_at = models.DateTimeField(default=None, blank=True, null=True)
     def __str__(self):
       return str(self.item)
+    def reqown(self):
+      return self.objects.filter(filled_at=None).item.owned_by
 
 class Item_status(models.Model):
     item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
@@ -70,4 +72,4 @@ class Item_status(models.Model):
     def __time__(self):
      return self.loaned_at
     def itemname(self):
-      return (self.item.item_name)
+      return self.item.item_name

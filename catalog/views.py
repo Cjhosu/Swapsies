@@ -11,18 +11,21 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import F
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def index(request):
     num_books=Book.objects.all().count()
     num_comics=Comic.objects.all().count()
     num_visits=request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits+1
     reqitem=Item_request.objects.filter(filled_at= None)
-    reqcount=Item_request.objects.filter(filled_at=None).count()
+    reqown=Item_request.objects.filter(item__owned_by=request.user, filled_at=None)
+    reqcount = reqown.count()
     return render(
         request,
         'index.html',
-        context={'num_books':num_books, 'num_comics':num_comics, 'num_visits':num_visits, 'reqitem':reqitem, 'reqcount':reqcount},
+        context={'reqown':reqown, 'num_books':num_books, 'num_comics':num_comics, 'num_visits':num_visits, 'reqitem':reqitem, 'reqcount':reqcount},
 )
 
 
@@ -221,6 +224,22 @@ def IssueBookRequest(request,pk):
         )
         messages.info(request, 'Your request has been received!')
         return HttpResponseRedirect('/catalog/books/'+pk)
+    else:
+        return HttpResponseRedirect('/catalog/')
+
+def IssueComicRequest(request,pk):
+    comicreq = get_object_or_404(Book, pk=pk)
+    if request.method == 'POST':
+        irequest = Item_request()
+        comicitem = Comic.objects.get(pk=pk)
+        obj, created = Item_request.objects.update_or_create(
+            item_id = comicitem.item_id,
+            requester = request.user,
+            filled_at = None,
+          defaults = {'requested_at': datetime.now()}
+        )
+        messages.info(request, 'Your request has been received!')
+        return HttpResponseRedirect('/catalog/comics/'+pk)
     else:
         return HttpResponseRedirect('/catalog/')
 

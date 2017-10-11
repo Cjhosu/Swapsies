@@ -8,6 +8,11 @@ class IssueBookRequestForm(forms.ModelForm):
         model = Item_request
         fields = '__all__'
 
+class IssueComicRequestForm(forms.ModelForm):
+    class Meta:
+        model = Item_request
+        fields = '__all__'
+
 class AddBookForm(forms.Form):
     item_id = forms.IntegerField
     item_name = forms.CharField(max_length=100)

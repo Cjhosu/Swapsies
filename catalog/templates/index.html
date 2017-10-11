@@ -14,13 +14,13 @@
 
 <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}</p>
 <br>
+
 {% if reqcount > 0 %}
 <h4  style="color:green"> <strong> Requests:</h4>
     {% for thing in reqitem %}
         {% if thing.item.owned_by == request.user %}
-
            <li style="color:green">
-           {{thing.item.bookit.get.title}} ({{thing.requester}})
+           {{thing.item}} [{{thing.requester}}]
             </li>
         {% endif %}
     {% endfor %}
