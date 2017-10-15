@@ -17,15 +17,13 @@ from django.views import generic
 def index(request):
     num_books=Book.objects.all().count()
     num_comics=Comic.objects.all().count()
-    num_visits=request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits+1
     reqitem=Item_request.objects.filter(filled_at= None)
     reqown=Item_request.objects.filter(item__owned_by=request.user, filled_at=None)
     reqcount = reqown.count()
     return render(
         request,
         'index.html',
-        context={'reqown':reqown, 'num_books':num_books, 'num_comics':num_comics, 'num_visits':num_visits, 'reqitem':reqitem, 'reqcount':reqcount},
+        context={'reqown':reqown, 'num_books':num_books, 'num_comics':num_comics, 'reqitem':reqitem, 'reqcount':reqcount},
 )
 
 
