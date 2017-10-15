@@ -5,7 +5,6 @@ from .forms import AddBookForm, AddComicForm, UpdateBorrowerForm, AddItemForm, S
 from django.http import HttpResponseRedirect
 from datetime import datetime
 from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request
-from .filters import BookListFilter
 from django.views import generic
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
