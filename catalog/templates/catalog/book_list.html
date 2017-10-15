@@ -3,6 +3,11 @@
 {% block content %}
     <h1>Book List</h1>
 
+<form method="get" action="{% url 'books' %}">
+    <p>Search: <input type="text" name="search" value={{search}} ></p>
+    <p><input type="submit" name="submit" value="Submit"<button class="btn btn-default btn-sm" type="button" style="color:#000000"/></button> </p>
+</form>
+
     {% if book_list %}
     <ul>
 
