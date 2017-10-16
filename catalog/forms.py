@@ -1,7 +1,11 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Item_type , Item_status, Item_request, User
+from .models import Book, Item_type , Item_status, Item_request, User
 from django.contrib.auth.forms import UserCreationForm
+class BookFilterForm(forms.Form):
+    def __int__(self, *args, request_data=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['filter'].initial = request_data.GET.get('filter','')
 
 class IssueBookRequestForm(forms.ModelForm):
     class Meta:
@@ -23,6 +27,19 @@ class AddBookForm(forms.Form):
     publisher = forms.CharField(max_length=30)
     year = forms.CharField(max_length=4)
     description = forms.CharField(widget=forms.Textarea)
+
+class UpdateBookForm(forms.ModelForm):
+    item_id = forms.IntegerField
+    title = forms.CharField(max_length=255)
+    author_first = forms.CharField(max_length=100)
+    author_last = forms.CharField(max_length=100)
+    isbn = forms.CharField(max_length=15)
+    publisher = forms.CharField(max_length=30)
+    year = forms.CharField(max_length=4)
+    description = forms.CharField(widget=forms.Textarea)
+    class Meta:
+        model = Book
+        fields = '__all__'
 
 class AddComicForm(forms.Form):
     item_id = forms.IntegerField

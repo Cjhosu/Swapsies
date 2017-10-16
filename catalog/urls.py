@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^books/$', views.BookListView.as_view(), name='books'),
     url(r'comics/$', views.ComicListView.as_view(), name = 'comics'),
     url(r'^books/(?P<pk>\d+)$', views.BookDetailView.as_view(), name='books-detail'),
+    url(r'^books/(?P<pk>\d+)/update/$', views.BookUpdateView, name='book_update'),
     url(r'^comics/(?P<pk>\d+)$', views.ComicDetailView.as_view(), name='comics-detail'),
     url(r'^mybooks/$', views.LoanedItemsByUserListView.as_view(), name='my-books'),
     url(r'^books/add/$', views.AddNewBook, name='add_book'),

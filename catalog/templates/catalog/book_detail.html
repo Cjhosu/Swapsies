@@ -1,9 +1,20 @@
 {% extends "base_generic.html" %}
 {% load static %}
 {% block content %}
-  <h1>{{ book.title }}</h1>
 
-  <p><strong>Author:</strong> <a href="">{{ book.author_first }}, {{book.author_last}}</a></p> <!-- author detail link not yet defined -->
+<h1> {{ book.title }}</h1> 
+
+{% if book.item.owned_by == request.user %}
+
+<form action="{% url 'book_update' book.id %}" method="get">
+{% csrf_token %}
+        <input type="submit" value="Update"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+
+{% endif %}
+
+<br>
+<p><strong>Author:</strong> <a href="">{{ book.author_first }}, {{book.author_last}}</a></p> <!-- author detail link not yet defined -->
   <p><strong>Copyright:</strong> {{ book.publisher }} {{book.year}}</p>
   <p><strong>ISBN:</strong> {{ book.isbn }}</p> 
   <div style="margin-left:20px;margin-top:20px">

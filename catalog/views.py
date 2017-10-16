@@ -1,6 +1,6 @@
 
 # Create your views here.
-from .forms import AddBookForm, AddComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm
+from .forms import AddBookForm, UpdateBookForm, AddComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm
 from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -11,7 +11,9 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views import generic
+from django.views.generic.edit import UpdateView
 
 @login_required
 def index(request):
@@ -30,41 +32,15 @@ def index(request):
 class BookListView(LoginRequiredMixin,generic.ListView):
     model = Book
     paginate_by = 10
+    ordering = ('title', )
 
     def get_queryset(self,**kwargs):
         filter_val = self.request.GET.get('search', '')
         return Book.objects.filter(Q(title__icontains = filter_val) | Q(author_last__icontains = filter_val)).order_by('title')
 
 
-
-class ComicListView(LoginRequiredMixin,generic.ListView):
-    model = Comic
-    paginate_by = 10
-
-    def get_queryset(self,**kwargs):
-        filter_val = self.request.GET.get('search', '')
-        return Comic.objects.filter(Q(title__icontains = filter_val) | Q(series__icontains = filter_val)).order_by('title')
-
 class BookDetailView(LoginRequiredMixin,generic.DetailView):
     model = Book
-
-class ComicDetailView(LoginRequiredMixin,generic.DetailView):
-    model = Comic
-
-class LoanedItemsByUserListView(LoginRequiredMixin,generic.ListView):
-    model = Item_status
-    template_name ='catalog/item_status_list_borrowed_user.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return Item_status.objects.filter(borrower=self.request.user).order_by('due_back')
-
-    def get_context_data(self, **kwargs):
-        context = super(LoanedItemsByUserListView, self).get_context_data(**kwargs)
-        context['Owned_list'] = Item.objects.filter(owned_by=self.request.user, item_type = 1)
-        context['Loaned_list'] = Item_status.objects.filter(item__owned_by=self.request.user).exclude(borrower=self.request.user).exclude(borrower__isnull=True)
-        context['Other_list'] = Item_status.objects.filter(item__owned_by=self.request.user).exclude(borrower=self.request.user).filter(borrower__isnull=True)
-        return context
 
 
 def AddNewBook(request):
@@ -103,6 +79,45 @@ def AddNewBook(request):
     return render(request, 'catalog/add_book_form.html', {'form': form})
 
 
+
+def BookUpdateView(request, pk):
+    bkinstance = get_object_or_404(Book, pk=pk)
+    form = UpdateBookForm(request.POST or None, instance=bkinstance)
+    if form.is_valid():
+        form.save()
+        return redirect('/catalog/books/')
+    return render(request, 'catalog/book_form.html', {'form': form})
+
+class ComicListView(LoginRequiredMixin,generic.ListView):
+    model = Comic
+    paginate_by = 10
+    ordering = ('title', )
+
+    def get_queryset(self,**kwargs):
+        filter_val = self.request.GET.get('search', '')
+        return Comic.objects.filter(Q(title__icontains = filter_val) | Q(series__icontains = filter_val))
+
+
+class ComicDetailView(LoginRequiredMixin,generic.DetailView):
+    model = Comic
+
+
+class LoanedItemsByUserListView(LoginRequiredMixin,generic.ListView):
+    model = Item_status
+    template_name ='catalog/item_status_list_borrowed_user.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Item_status.objects.filter(borrower=self.request.user).order_by('due_back')
+
+    def get_context_data(self, **kwargs):
+        context = super(LoanedItemsByUserListView, self).get_context_data(**kwargs)
+        context['Owned_list'] = Item.objects.filter(owned_by=self.request.user, item_type = 1)
+        context['Loaned_list'] = Item_status.objects.filter(item__owned_by=self.request.user).exclude(borrower=self.request.user).exclude(borrower__isnull=True)
+        context['Other_list'] = Item_status.objects.filter(item__owned_by=self.request.user).exclude(borrower=self.request.user).filter(borrower__isnull=True)
+        return context
+
+
 def AddNewComic(request):
     if request.POST:
         form = AddComicForm(request.POST)
@@ -137,6 +152,7 @@ def AddNewComic(request):
     else:
         form = AddComicForm()
     return render(request, 'catalog/add_comic_form.html', {'form': form})
+
 
 def AddNewItem(request):
     if request.method == 'POST':
@@ -231,7 +247,7 @@ def IssueBookRequest(request,pk):
         return HttpResponseRedirect('/catalog/')
 
 def IssueComicRequest(request,pk):
-    comicreq = get_object_or_404(Comic, pk=pk)
+    comicreq = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
         comicitem = Comic.objects.get(pk=pk)
         obj, created = Item_request.objects.update_or_create(
