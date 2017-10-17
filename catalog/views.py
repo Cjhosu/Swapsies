@@ -95,7 +95,7 @@ class ComicListView(LoginRequiredMixin,generic.ListView):
 
     def get_queryset(self,**kwargs):
         filter_val = self.request.GET.get('search', '')
-        return Comic.objects.filter(Q(title__icontains = filter_val) | Q(series__icontains = filter_val))
+        return Comic.objects.filter(Q(title__icontains = filter_val) | Q(series__icontains = filter_val)).order_by('title')
 
 
 def ComicUpdateView(request, pk):
