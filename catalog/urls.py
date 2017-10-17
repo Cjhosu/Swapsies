@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^books/(?P<pk>\d+)$', views.BookDetailView.as_view(), name='books-detail'),
     url(r'^books/(?P<pk>\d+)/update/$', views.BookUpdateView, name='book_update'),
     url(r'^comics/(?P<pk>\d+)$', views.ComicDetailView.as_view(), name='comics-detail'),
+    url(r'^comics/(?P<pk>\d+)/update/$', views.ComicUpdateView, name='comic_update'),
     url(r'^mybooks/$', views.LoanedItemsByUserListView.as_view(), name='my-books'),
     url(r'^books/add/$', views.AddNewBook, name='add_book'),
     url(r'^comics/add/$', views.AddNewComic, name='add_comic'),

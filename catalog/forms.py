@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Book, Item_type , Item_status, Item_request, User
+from .models import Book, Comic, Item_type , Item_status, Item_request, User
 from django.contrib.auth.forms import UserCreationForm
 class BookFilterForm(forms.Form):
     def __int__(self, *args, request_data=None, **kwargs):
@@ -51,6 +51,19 @@ class AddComicForm(forms.Form):
     year = forms.CharField(max_length=4)
     month = forms.CharField(max_length=10, required=False)
     description = forms.CharField(widget=forms.Textarea)
+
+class UpdateComicForm(forms.ModelForm):
+    item_id = forms.IntegerField
+    title = forms.CharField(max_length=255)
+    publisher = forms.CharField(max_length=30)
+    series = forms.CharField(max_length=50)
+    number = forms.IntegerField(required=False, initial=None )
+    year = forms.CharField(max_length=4)
+    month = forms.CharField(max_length=10, required=False)
+    description = forms.CharField(widget=forms.Textarea)
+    class Meta:
+        model = Comic
+        fields = '__all__'
 
 class AddItemForm(forms.Form):
     item_type = forms.ModelChoiceField(queryset=Item_type.objects.all())

@@ -3,9 +3,20 @@
 {% block content %}
   <h1>{{ comic.series }}</h1>
 
+{% if comic.item.owned_by == request.user %}
+
+<form action="{% url 'comic_update' comic.id %}" method="get">
+{% csrf_token %}
+        <input type="submit" value="Update"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+
+{% endif %}
+
+<br>
   <p><strong>Title:</strong> {{ comic.title }}</p>
   <p><strong>Publisher:</strong> {{ comic.publisher }}</p>
   <p><strong>Month:</strong> {{ comic.month }}</p>
+  <p><strong>Year:</strong> {{ comic.year }}</p>
   <p><strong>Number:</strong> {{ comic.number }}</p>
   <div style="margin-left:20px;margin-top:20px">
   <div style="margin-left:20px;margin-top:20px">
