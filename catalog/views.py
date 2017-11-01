@@ -1,7 +1,7 @@
 
 # Create your views here.
 from .forms import AddBookForm, UpdateBookForm, AddComicForm, UpdateComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm
-from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request
+from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request, Request_message
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -19,13 +19,15 @@ from django.views.generic.edit import UpdateView
 def index(request):
     num_books=Book.objects.all().count()
     num_comics=Comic.objects.all().count()
-    reqitem=Item_request.objects.filter(filled_at= None)
-    reqown=Item_request.objects.filter(item__owned_by=request.user, filled_at=None)
+    reqitem=Item_request.objects.filter(filled_at= None, is_accepted=None)
+    reqown=Item_request.objects.filter(item__owned_by=request.user, filled_at=None, is_accepted=None)
     reqcount = reqown.count()
+    mymes=Request_message.objects.filter(request__requester=request.user, is_viewed = None)
+    mescount=mymes.count()
     return render(
         request,
         'index.html',
-        context={'reqown':reqown, 'num_books':num_books, 'num_comics':num_comics, 'reqitem':reqitem, 'reqcount':reqcount},
+        context={'reqown':reqown, 'num_books':num_books, 'num_comics':num_comics, 'reqitem':reqitem, 'reqcount':reqcount,'mescount':mescount,  'mymes':mymes},
 )
 
 
@@ -185,6 +187,41 @@ def MarkReturned(request, pk):
         return HttpResponseRedirect('/catalog/mybooks')
     else:
         return HttpResponseRedirect('/catalog/mybooks/')
+
+def AcceptRequest(request, pk):
+    req = get_object_or_404(Item_request, pk=pk)
+    if request.method == 'POST':
+        req.is_accepted = True
+        req.save()
+        mes = Request_message()
+        mes.request = Item_request.objects.get(pk=pk)
+        mes.message = 'Your request for '+str(req.item)+' has been accepted'
+        mes.save()
+        return HttpResponseRedirect('/catalog/')
+    else:
+        return HttpResponseRedirect('/catalog/')
+
+def DenyRequest(request, pk):
+    req = get_object_or_404(Item_request, pk=pk)
+    if request.method == 'POST':
+        req.is_accepted = False
+        req.save()
+        mes = Request_message()
+        mes.request = Item_request.objects.get(pk=pk)
+        mes.message = 'Your request for '+str(req.item)+' has been denied'
+        mes.save()
+        return HttpResponseRedirect('/catalog/')
+    else:
+        return HttpResponseRedirect('/catalog/')
+
+def AckMessage(request, pk):
+    mes = get_object_or_404(Request_message, pk=pk)
+    if request.method == 'POST':
+        mes.is_viewed = True
+        mes.save()
+        return HttpResponseRedirect('/catalog/')
+    else:
+        return HttpResponseRedirect('/catalog/')
 
 def PassBorrower(request, pk):
     item = get_object_or_404(Item_status, pk=pk)

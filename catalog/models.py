@@ -18,7 +18,7 @@ class Item_type(models.Model):
 class Item(models.Model):
     item_name = models.CharField(max_length=100)
     item_type = models.ForeignKey(Item_type, on_delete=models.SET_NULL, null=True)
-    owned_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)    
+    owned_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     added_at = models.DateTimeField('date item added')
     updated_at = models.DateTimeField('last update')
     def __str__(self):
@@ -50,15 +50,30 @@ class Comic(models.Model):
     def __str__(self):
       return (self.series)
 
+
+class Request_type(models.Model):
+    type = models.CharField(max_length=25)
+    def __str__(self):
+        return (self.type)
+
+
 class Item_request(models.Model):
     item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
     requester = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     requested_at = models.DateTimeField(default=None, blank=True, null=True)
     filled_at = models.DateTimeField(default=None, blank=True, null=True)
+    is_accepted = models.NullBooleanField(default=None, blank=True, null=True)
+    request_type = models.ForeignKey(Request_type, on_delete=models.SET_NULL, null=True)
     def __str__(self):
       return str(self.item)
     def reqown(self):
       return self.objects.filter(filled_at=None).item.owned_by
+
+
+class Request_message(models.Model):
+    request =  models.ForeignKey(Item_request, on_delete=models.SET_NULL, null=True)
+    message = models.TextField(default=None, blank=True, null=True)
+    is_viewed = models.NullBooleanField(default=None, blank=True, null=True)
 
 class Item_status(models.Model):
     item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)

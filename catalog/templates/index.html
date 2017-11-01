@@ -21,9 +21,50 @@
         {% if thing.item.owned_by == request.user %}
            <li style="color:green">
            {{thing.item}} [{{thing.requester}}]
-            </li>
+<br>
+<div class=inline>
+            <form action="{% url 'accept-request' thing.id %}" method="post">
+{% csrf_token %}
+        <input type="submit" value="Accept Request"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</div>
+</form>
+<div class=inline>
+            <form action="{% url 'deny-request' thing.id %}" method="post">
+{% csrf_token %}
+        <input type="submit" value="Deny"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</form>
+</div>
+<br>
+</li>
+<br>
         {% endif %}
     {% endfor %}
         </strong>
 {% endif %}
+
+
+<br>
+<br>
+{% if mescount > 0 %}
+<h4  style="color:green"> <strong> Messages:</h4>
+    {% for thing in mymes %}
+           <li style="color:green">
+           {{thing.message}}
+            <form action="{% url 'ack-message' thing.id %}" method="post">
+{% csrf_token %}
+        <input type="submit" value="Dismiss"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+<div class=inline>
+</form>
+</div>
+<br>
+</li>
+<br>
+    {% endfor %}
+        </strong>
+{% endif %}
+
+
+
+
+
 {% endblock %}
