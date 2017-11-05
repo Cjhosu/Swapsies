@@ -23,6 +23,7 @@
   {% block sidebar %}
   <ul class="sidebar-nav">
   {% if user.is_authenticated %}
+    <h2> Swapsies </h2>
     <li><strong>User: {{ user.get_username }}</strong></li>
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'books' %}">Books</a></li>

@@ -24,10 +24,11 @@ def index(request):
     reqcount = reqown.count()
     mymes=Request_message.objects.filter(request__requester=request.user, is_viewed = None)
     mescount=mymes.count()
+    pendloan=Item_request.objects.filter(item__owned_by=request.user, filled_at=None, is_accepted=True)
     return render(
         request,
         'index.html',
-        context={'reqown':reqown, 'num_books':num_books, 'num_comics':num_comics, 'reqitem':reqitem, 'reqcount':reqcount,'mescount':mescount,  'mymes':mymes},
+        context={'reqown':reqown, 'num_books':num_books, 'num_comics':num_comics, 'reqitem':reqitem, 'reqcount':reqcount,'mescount':mescount,  'mymes':mymes ,'pendloan':pendloan},
 )
 
 

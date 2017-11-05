@@ -1,21 +1,26 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<h1>Swapsies</h1>
-
-  <p>Welcome to <em>Swapsies</em>, a very basic Django website developed to share items!</p>
-
-
-<h3>New Feature : Searchbars and Update </h3>
-<h4> Bug Fixes: Fixed comic request key bug. Removed session counter.</h4>
+<br>
+<br>
+ <h3> <p>Welcome to <em>Swapsies</em>, a place to share books and comics!</p></h3>
+    {% for thing in pendloan %}
+           <li style="color:red">
+          Dont forget to give {{thing.item}} to {{thing.requester}}
+      </li>
+    {% endfor %}
+<br>
+<h4>New Feature : Approve or deny requests & Notification of request approval/denial </h4>
+<h5> Bug Fixes: Cleaned up home page</h5>
 
   <ul>
     <li><strong>We are currently lending {{ num_books }} books and {{ num_comics}} {% if num_comics == 1 %} comic{% else %} comics{% endif %}! </strong> </li>
   </ul>
 
 <br>
-
+<div style="margin-left:30px;margin-top:20px">
 {% if reqcount > 0 %}
+<hr>
 <h4  style="color:green"> <strong> Requests:</h4>
     {% for thing in reqitem %}
         {% if thing.item.owned_by == request.user %}
@@ -43,9 +48,8 @@
 {% endif %}
 
 
-<br>
-<br>
 {% if mescount > 0 %}
+<hr>
 <h4  style="color:green"> <strong> Messages:</h4>
     {% for thing in mymes %}
            <li style="color:green">
@@ -55,6 +59,8 @@
         <input type="submit" value="Dismiss"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
 <div class=inline>
 </form>
+</div>
+<hr>
 </div>
 <br>
 </li>
