@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Book, Comic, Item_type , Item_status, Item_request, User
+from .models import Book, Comic, Item_type , Item_status, Item_request, Request_message, User
 from django.contrib.auth.forms import UserCreationForm
 class BookFilterForm(forms.Form):
     def __int__(self, *args, request_data=None, **kwargs):
@@ -84,3 +84,9 @@ class SignUpForm(UserCreationForm):
 
         for fieldname in ['username', 'password1', 'password2']:
             self.fields[fieldname].help_text = None
+
+class CustMesForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea)
+    class Meta:
+        model = Request_message
+        fields = '__all__'

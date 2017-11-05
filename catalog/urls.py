@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^books/add/$', views.AddNewBook, name='add_book'),
     url(r'^comics/add/$', views.AddNewComic, name='add_comic'),
     url(r'^add_item/$', views.AddNewItem, name='add_item'),
+    url(r'^cust_mes/$',views.CustMes, name='cust_mes'),
     url(r'mark-returned/(?P<pk>\d+)$',views.MarkReturned, name='mark-returned'),
     url(r'accept-request/(?P<pk>\d+)$',views.AcceptRequest, name='accept-request'),
     url(r'deny-request/(?P<pk>\d+)$',views.DenyRequest, name='deny-request'),

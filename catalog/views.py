@@ -1,6 +1,6 @@
 
 # Create your views here.
-from .forms import AddBookForm, UpdateBookForm, AddComicForm, UpdateComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm
+from .forms import AddBookForm, UpdateBookForm, AddComicForm, UpdateComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm, CustMesForm
 from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request, Request_message
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -129,6 +129,7 @@ class LoanedItemsByUserListView(LoginRequiredMixin,generic.ListView):
         return context
 
 
+
 def AddNewComic(request):
     if request.POST:
         form = AddComicForm(request.POST)
@@ -180,6 +181,7 @@ def AddNewItem(request):
         form = AddItemForm()
         return render(request, 'catalog/add_item.html', {'form':form})
 
+
 def MarkReturned(request, pk):
     item = get_object_or_404(Item_status, pk=pk)
     if request.method == 'POST':
@@ -209,11 +211,25 @@ def DenyRequest(request, pk):
         req.save()
         mes = Request_message()
         mes.request = Item_request.objects.get(pk=pk)
-        mes.message = 'Your request for '+str(req.item)+' has been denied'
+        mes.message = 'Your request for '+str(req.item)+' has been denied. '
         mes.save()
-        return HttpResponseRedirect('/catalog/')
+        request.session['pk']=mes.pk
+        return HttpResponseRedirect('/catalog/cust_mes')
     else:
         return HttpResponseRedirect('/catalog/')
+
+def CustMes(request):
+    if request.POST:
+        form = CustMesForm(request.POST)
+        if form.is_valid():
+            pk= request.session['pk']
+            addmes = Request_message.objects.get(pk=pk)
+            addmes.message += ' ---   Message: ' + form.cleaned_data['message']
+            addmes.save()
+            return HttpResponseRedirect('/')
+    else:
+        form = CustMesForm()
+    return render(request, 'catalog/cust_mes.html', {'form': form})
 
 def AckMessage(request, pk):
     mes = get_object_or_404(Request_message, pk=pk)
