@@ -205,15 +205,8 @@ def AcceptRequest(request, pk):
         return HttpResponseRedirect('/catalog/')
 
 def DenyRequest(request, pk):
-    req = get_object_or_404(Item_request, pk=pk)
     if request.method == 'POST':
-        req.is_accepted = False
-        req.save()
-        mes = Request_message()
-        mes.request = Item_request.objects.get(pk=pk)
-        mes.message = 'Your request for '+str(req.item)+' has been denied. '
-        mes.save()
-        request.session['pk']=mes.pk
+        request.session['pk']=pk
         return HttpResponseRedirect('/catalog/cust_mes')
     else:
         return HttpResponseRedirect('/catalog/')
@@ -221,9 +214,16 @@ def DenyRequest(request, pk):
 def CustMes(request):
     if request.POST:
         form = CustMesForm(request.POST)
+        pk= request.session['pk']
+        req = get_object_or_404(Item_request, pk=pk)
         if form.is_valid():
-            pk= request.session['pk']
-            addmes = Request_message.objects.get(pk=pk)
+            req.is_accepted = False
+            req.save()
+            mes = Request_message()
+            mes.request = Item_request.objects.get(pk=pk)
+            mes.message = 'Your request for '+str(req.item)+' has been denied. '
+            mes.save()
+            addmes = Request_message.objects.get(pk=mes.pk)
             addmes.message += ' ---   Message: ' + form.cleaned_data['message']
             addmes.save()
             return HttpResponseRedirect('/')
