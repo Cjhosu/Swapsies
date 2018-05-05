@@ -204,17 +204,9 @@ def AcceptRequest(request, pk):
     else:
         return HttpResponseRedirect('/catalog/')
 
-def DenyRequest(request, pk):
-    if request.method == 'POST':
-        request.session['pk']=pk
-        return HttpResponseRedirect('/catalog/cust_mes')
-    else:
-        return HttpResponseRedirect('/catalog/')
-
-def CustMes(request):
+def CustMes(request, pk):
     if request.POST:
         form = CustMesForm(request.POST)
-        pk= request.session['pk']
         req = get_object_or_404(Item_request, pk=pk)
         if form.is_valid():
             req.is_accepted = False
