@@ -1,8 +1,9 @@
-{% extends "base_generic.html" %}
-
 {% block content %}
+<div class="padded" style="color:black">
 <br></br>
     <h2> Please Enter a Denial Message </h2>
+
+
 
 <form action="" method="post">
     {% csrf_token %}
@@ -13,4 +14,5 @@
     <input type="submit" value="Submit"<button class="btn btn-default btn-sm" type="button" style="color:#000000"/></button> <a href="{% url 'index' %}"<button class="btn btn-default btn-sm" type="button" style="color: #000000">Cancel</button></a>
 
 </form>
+</div>
 {% endblock %}

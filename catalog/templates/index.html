@@ -11,7 +11,7 @@
     {% endfor %}
 <br>
 <h4>New Feature : Approve or deny requests & Notification of request approval/denial </h4>
-<h5> Clanceling a denial message now cancels the denial as well</h5>
+<h5> Canceling a denial message now cancels the denial as well</h5>
 
   <ul>
     <li><strong>We are currently lending {{ num_books }} books and {{ num_comics}} {% if num_comics == 1 %} comic{% else %} comics{% endif %}! </strong> </li>
@@ -32,11 +32,31 @@
 {% csrf_token %}
         <input type="submit" value="Accept Request"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
 </div>
-</form>
-<div class=inline>
-            <form action="{% url 'deny-request' thing.id %}" method="post">
+</form >
+<form action="{% url 'cust_mes' thing.id %}" method="post">
 {% csrf_token %}
-        <input type="submit" value="Deny"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+<div class="modal fade" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+     <div class="modal-content">
+       <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+         <h4 class="modal-title">Modal title</h4>
+       </div>
+       <div id="form-modal-body" class="modal-body">
+       </div>
+       <div class="modal-footer">
+         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+       </div>
+     </div>
+   </div>
+</div>
+</form>
+<form>
+{% csrf_token %}
+<a data-toggle="modal" href="{% url 'cust_mes' thing.id  %}" method="post" data-target="#form-modal">
+<div class=inline>
+<input type="submit" value="Deny"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
+</a>
 </form>
 </div>
 <br>
@@ -68,9 +88,6 @@
     {% endfor %}
         </strong>
 {% endif %}
-
-
-
 
 
 {% endblock %}
