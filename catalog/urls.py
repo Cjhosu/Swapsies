@@ -17,7 +17,6 @@ urlpatterns = [
     url(r'^cust_mes/(?P<pk>\d+)$',views.CustMes, name='cust_mes'),
     url(r'mark-returned/(?P<pk>\d+)$',views.MarkReturned, name='mark-returned'),
     url(r'accept-request/(?P<pk>\d+)$',views.AcceptRequest, name='accept-request'),
-    url(r'deny-request/(?P<pk>\d+)$',views.DenyRequest, name='deny-request'),
     url(r'ack-message/(?P<pk>\d+)$',views.AckMessage, name='ack-message'),
     url(r'^update_borrower/$', views.UpdateBorrower, name='update_borrower'),
     url(r'pass-borrower/(?P<pk>\d+)$',views.PassBorrower, name='pass-borrower'),
