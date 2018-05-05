@@ -32,7 +32,7 @@
 {% csrf_token %}
         <input type="submit" value="Accept Request"<button class="btn btn-default btn-xs" type="button" style="color:#000000"/></button>
 </div>
-</form >
+</form>
 <form action="{% url 'cust_mes' thing.id %}" method="post">
 {% csrf_token %}
 <div class="modal fade" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
