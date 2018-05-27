@@ -69,7 +69,7 @@ class UpdateComicForm(forms.ModelForm):
 class AddItemForm(forms.Form):
     item_type = forms.ModelChoiceField(queryset=Item_type.objects.all())
 
-ass UpdateBorrowerForm(forms.Form):
+class UpdateBorrowerForm(forms.Form):
     user = forms.ChoiceField(choices = [ ])
     def __init__(self,uid, *args, **kwargs):
         super().__init__(*args, **kwargs)
