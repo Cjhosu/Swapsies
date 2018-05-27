@@ -1,5 +1,5 @@
 # Create your views here.
-from .forms import AddBookForm, UpdateBookForm, AddComicForm, UpdateComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm, CustMesForm
+from .forms import AddBookForm, UpdateBookForm, AddComicForm, UpdateComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm, CustMesForm, InactiveUserForm
 from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request, Request_message
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views import generic
+from django.views import generic, View
 from django.views.generic.edit import UpdateView , FormView
 
 @login_required
