@@ -1,4 +1,3 @@
-
 # Create your views here.
 from .forms import AddBookForm, UpdateBookForm, AddComicForm, UpdateComicForm, UpdateBorrowerForm, AddItemForm, SignUpForm, IssueBookRequestForm, CustMesForm
 from .models import Item, User, Item_type, Book, Comic, Item_status, Item_request, Request_message
@@ -81,15 +80,20 @@ def AddNewBook(request):
         form = AddBookForm()
     return render(request, 'catalog/add_book_form.html', {'form': form})
 
+class BookUpdateView(LoginRequiredMixin,View):
+    model = Book
 
+    def get(self, request, pk):
+        bkinstance = get_object_or_404(Book, pk=pk)
+        form = UpdateBookForm(instance=bkinstance)
+        return render(request, 'catalog/book_form.html', {'form': form})
 
-def BookUpdateView(request, pk):
-    bkinstance = get_object_or_404(Book, pk=pk)
-    form = UpdateBookForm(request.POST or None, instance=bkinstance)
-    if form.is_valid():
-        form.save()
-        return redirect('/catalog/books/')
-    return render(request, 'catalog/book_form.html', {'form': form})
+    def post(self, request, pk):
+        bkinstance = get_object_or_404(Book, pk=pk)
+        form = UpdateBookForm(request.POST , instance=bkinstance)
+        if form.is_valid():
+            form.save()
+            return redirect('/catalog/books/')
 
 class ComicListView(LoginRequiredMixin,generic.ListView):
     model = Comic
@@ -100,14 +104,20 @@ class ComicListView(LoginRequiredMixin,generic.ListView):
         filter_val = self.request.GET.get('search', '')
         return Comic.objects.filter(Q(title__icontains = filter_val) | Q(series__icontains = filter_val)).order_by('title')
 
+class ComicUpdateView(LoginRequiredMixin, View):
+    model = Comic
 
-def ComicUpdateView(request, pk):
-    cminstance = get_object_or_404(Comic, pk=pk)
-    form = UpdateComicForm(request.POST or None, instance=cminstance)
-    if form.is_valid():
+    def get(self, request, pk):
+      cminstance= get_object_or_404(Comic, pk=pk)
+      form = UpdateComicForm(instance=cminstance)
+      return render(request, 'catalog/comic_form.html', {'form': form})
+
+    def post(self, request, pk):
+      cminstance = get_object_or_404(Comic, pk=pk)
+      form = UpdateComicForm(request.POST, instance=cminstance)
+      if form.is_valid():
         form.save()
         return redirect('/catalog/comics/')
-    return render(request, 'catalog/comic_form.html', {'form': form})
 
 class ComicDetailView(LoginRequiredMixin,generic.DetailView):
     model = Comic
@@ -127,8 +137,6 @@ class LoanedItemsByUserListView(LoginRequiredMixin,generic.ListView):
         context['Loaned_list'] = Item_status.objects.filter(item__owned_by=self.request.user).exclude(borrower=self.request.user).exclude(borrower__isnull=True)
         context['Other_list'] = Item_status.objects.filter(item__owned_by=self.request.user).exclude(borrower=self.request.user).filter(borrower__isnull=True)
         return context
-
-
 
 def AddNewComic(request):
     if request.POST:
@@ -240,13 +248,16 @@ def PassBorrower(request, pk):
     else:
         return HttpResponseRedirect('/catalog/mybooks/')
 
-
 def UpdateBorrower(request):
     if request.method == 'POST':
-        form = UpdateBorrowerForm(request.POST)
+        form = UpdateBorrowerForm(request.user.id, request.POST)
         if form.is_valid():
             pk= request.session['pk']
-            user = form.cleaned_data['user']
+            userid = form.cleaned_data['user']
+            try:
+                user = User.objects.get(pk=userid)
+            except:
+                return HttpResponseRedirect('/catalog/inactive_user/'+pk)
             this = Item_status.objects.get(pk=pk)
             this.borrower = user
             this.save()
@@ -263,8 +274,26 @@ def UpdateBorrower(request):
             return HttpResponseRedirect('/catalog/mybooks/')
     elif request.method == 'GET':
         pk= request.session['pk']
-        form = UpdateBorrowerForm()
+        form = UpdateBorrowerForm(request.user.id)
         return render(request,'catalog/update_borrower.html', {'form':form})
+
+def CreateInactiveUser(request, pk):
+    if request.method == 'POST':
+        form = InactiveUserForm(request.POST)
+        if form.is_valid():
+            this = User()
+            this.username = form.cleaned_data['display_name']
+            this.first_name = form.cleaned_data['first_name']
+            this.last_name = form.cleaned_data['last_name']
+            this.is_active = 'f'
+            this.save()
+            brw = Item_status.objects.get(pk=pk)
+            brw.borrower = this
+            brw.save()
+            return HttpResponseRedirect('/catalog/mybooks')
+    else:
+        form = InactiveUserForm()
+        return render(request, 'catalog/inactive_user.html', {'form': form})
 
 def signup(request):
     if request.method == 'POST':

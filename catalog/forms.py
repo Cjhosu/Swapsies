@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from .models import Book, Comic, Item_type , Item_status, Item_request, Request_message, User
 from django.contrib.auth.forms import UserCreationForm
+
 class BookFilterForm(forms.Form):
     def __int__(self, *args, request_data=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -68,11 +69,24 @@ class UpdateComicForm(forms.ModelForm):
 class AddItemForm(forms.Form):
     item_type = forms.ModelChoiceField(queryset=Item_type.objects.all())
 
-class UpdateBorrowerForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=User.objects.all())
-  #  def __str__(self):
-   #  return User.name
+ass UpdateBorrowerForm(forms.Form):
+    user = forms.ChoiceField(choices = [ ])
+    def __init__(self,uid, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = [ ]
+        for options in User.objects.filter(is_active='t').exclude(id=uid):
+            choices.append((options.id , options.username))
+        choices.append((-1, 'other'))
+        self.fields['user'].choices = choices
 
+class InactiveUserForm(forms.Form):
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+    display_name = forms.CharField(max_length=30)
+    class Meta:
+        model = User
+        fields= '__all__'
+        default_data = {'is_superuser':'f', 'is_staff':'f', 'password': 'nothing_will_hash_to_this', 'is_active':'f', 'email':'nomail'}
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')

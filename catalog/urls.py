@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'accept-request/(?P<pk>\d+)$',views.AcceptRequest, name='accept-request'),
     url(r'ack-message/(?P<pk>\d+)$',views.AckMessage, name='ack-message'),
     url(r'^update_borrower/$', views.UpdateBorrower, name='update_borrower'),
+    url(r'^inactive_user/(?P<pk>\d+)$$', views.CreateInactiveUser, name='incative_user'),
     url(r'pass-borrower/(?P<pk>\d+)$',views.PassBorrower, name='pass-borrower'),
     url(r'issue-book-request/(?P<pk>\d+)$',views.IssueBookRequest, name='issue-book-request'),
     url(r'issue-comic-request/(?P<pk>\d+)$',views.IssueComicRequest, name='issue-comic-request'),
