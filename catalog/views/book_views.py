@@ -93,7 +93,7 @@ def IssueBookRequest(request,pk):
             item_id = bookitem.item_id,
             requester = request.user,
             filled_at = None,
-          defaults = {'requested_at': datetime.now()}
+          defaults = {'is_accepted':None, 'requested_at': datetime.now()}
         )
         messages.info(request, 'Your request has been received!')
         return HttpResponseRedirect('/catalog/books/'+pk)
