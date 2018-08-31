@@ -1,6 +1,7 @@
 from ..forms import InactiveUserForm, SignUpForm
 from ..models import Item_status, User
 from django.http import HttpResponseRedirect
+from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 
 def signup(request):
