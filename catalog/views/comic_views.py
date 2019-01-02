@@ -1,3 +1,4 @@
+from .item_views import CreateItem, AddStatus
 from .. forms import AddComicForm, UpdateComicForm
 from ..models import Comic, Item, Item_request, Item_status
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -38,37 +39,28 @@ class ComicDetailView(LoginRequiredMixin,generic.DetailView):
 def AddNewComic(request):
     if request.POST:
         form = AddComicForm(request.POST)
+        item_type = Item_type.objects.get(type = 'Comic')
+        type_id = item_type.id
         if form.is_valid():
-            additem = Item()
-            additem.item_name = form.cleaned_data['item_name']
-            additem.item_type_id = 2
-            additem.owned_by = request.user
-            additem.added_at = datetime.now()
-            additem.updated_at = datetime.now()
-            additem.save()
-
-            obj_id = additem.id
-
-            addcomic = Comic()
-            addcomic.item_id = additem.id
-            addcomic.publisher = form.cleaned_data['publisher']
-            addcomic.series = form.cleaned_data['series']
-            addcomic.title = form.cleaned_data['title']
-            addcomic.number = form.cleaned_data['number']
-            addcomic.year = form.cleaned_data['year']
-            addcomic.month = form.cleaned_data['month']
-            addcomic.description  = form.cleaned_data['description']
-            addcomic.save()
-
-            addstatus = Item_status()
-            addstatus.item_id = additem.id
-
-            addstatus.save()
-
+            obj_id = CreateItem(request, form, type_id)
+            CreateComicRecord(request, form, obj_id)
+            AddStatus(request,obj_id)
             return HttpResponseRedirect('/catalog/comics/')
     else:
         form = AddComicForm()
     return render(request, 'catalog/add_comic_form.html', {'form': form})
+
+def CreateComicRecord(request, form, obj_id):
+    newcomic = Comic()
+    newcomic.item_id = obj_id
+    newcomic.publisher = form.cleaned_data['publisher']
+    newcomic.series = form.cleaned_data['series']
+    newcomic.title = form.cleaned_data['title']
+    newcomic.number = form.cleaned_data['number']
+    newcomic.year = form.cleaned_data['year']
+    newcomic.month = form.cleaned_data['month']
+    newcomic.description  = form.cleaned_data['description']
+    newcomic.save()
 
 def IssueComicRequest(request,pk):
     comicreq = get_object_or_404(Comic, pk=pk)

@@ -1,5 +1,6 @@
 from ..forms import AddBookForm, UpdateBookForm
 from ..models import Book, Item, Item_request, Item_status
+from .item_views import CreateItem, AddStatus
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from datetime import datetime
@@ -23,37 +24,28 @@ class BookDetailView(LoginRequiredMixin,generic.DetailView):
 def AddNewBook(request):
     if request.POST:
         form = AddBookForm(request.POST)
+        item_type = Item_type.objects.get(type = 'Book')
+        type_id = item_type.id
         if form.is_valid():
-            additem = Item()
-            additem.item_name = form.cleaned_data['item_name']
-            additem.item_type_id = 1
-            additem.owned_by = request.user
-            additem.added_at = datetime.now()
-            additem.updated_at = datetime.now()
-            additem.save()
-
-            obj_id = additem.id
-
-            addbook = Book()
-            addbook.item_id = additem.id
-            addbook.title = form.cleaned_data['title']
-            addbook.author_first = form.cleaned_data['author_first']
-            addbook.author_last = form.cleaned_data['author_last']
-            addbook.isbn = form.cleaned_data['isbn']
-            addbook.publisher = form.cleaned_data['publisher']
-            addbook.year = form.cleaned_data['year']
-            addbook.description  = form.cleaned_data['description']
-            addbook.save()
-
-            addstatus = Item_status()
-            addstatus.item_id = additem.id
-
-            addstatus.save()
-
+            obj_id = CreateItem(request, form, type_id)
+            CreateBookRecord(request, form, obj_id)
+            AddStatus(request, obj_id)
             return HttpResponseRedirect('/catalog/books/')
     else:
         form = AddBookForm()
     return render(request, 'catalog/add_book_form.html', {'form': form})
+
+def CreateBookRecord(request, form, obj_id):
+    newbook = Book()
+    newbook.item_id = obj_id
+    newbook.title = form.cleaned_data['title']
+    newbook.author_first = form.cleaned_data['author_first']
+    newbook.author_last = form.cleaned_data['author_last']
+    newbook.isbn = form.cleaned_data['isbn']
+    newbook.publisher = form.cleaned_data['publisher']
+    newbook.year = form.cleaned_data['year']
+    newbook.description  = form.cleaned_data['description']
+    newbook.save()
 
 class BookUpdateView(LoginRequiredMixin,View):
     model = Book

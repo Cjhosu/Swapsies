@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -34,4 +35,21 @@ def AddNewItem(request):
     else:
         form = AddItemForm()
         return render(request, 'catalog/add_item.html', {'form':form})
+
+def CreateItem(request, form, type_id):
+    if request.POST:
+        additem = Item()
+        additem.item_name = form.cleaned_data['item_name']
+        additem.item_type_id = type_id
+        additem.owned_by = request.user
+        additem.added_at = datetime.now()
+        additem.updated_at = datetime.now()
+        additem.save()
+        return additem.id
+
+def AddStatus(request,obj_id):
+    if request.POST:
+        addstatus = Item_status()
+        addstatus.item_id = obj_id
+        addstatus.save()
 
