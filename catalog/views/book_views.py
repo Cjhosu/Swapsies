@@ -1,5 +1,5 @@
 from ..forms import AddBookForm, UpdateBookForm
-from ..models import Book, Item, Item_request, Item_status
+from ..models import Book, Item, Item_request, Item_status, Item_type
 from .item_views import CreateItem, AddStatus
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
