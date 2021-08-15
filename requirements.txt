@@ -14,7 +14,7 @@ jedi==0.10.2
 Jinja2==2.11.3
 jsonschema==2.6.0
 jupyter==1.0.0
-jupyter-client==5.0.1
+jupyter-client==5.3.4
 jupyter-console==5.1.0
 jupyter-core==4.3.0
 MarkupSafe==1.1.1
