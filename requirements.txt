@@ -16,7 +16,7 @@ jsonschema==2.6.0
 jupyter==1.0.0
 jupyter-client==5.3.4
 jupyter-console==5.1.0
-jupyter-core==4.3.0
+jupyter-core==4.6.1
 MarkupSafe==1.1.1
 mistune==0.8.1
 nbconvert==5.2.1
@@ -35,9 +35,9 @@ pyzmq==21.0.1
 qtconsole==4.3.0
 simplegeneric==0.8.1
 six==1.10.0
-terminado==0.6
+terminado==0.8.3
 testpath==0.3.1
-tornado==4.5.1
+tornado==5.0
 traitlets==4.3.2
 wcwidth==0.1.7
 webencodings==0.5.1
